@@ -1,0 +1,5 @@
+{
+	"script" : "gl-server.js",
+	"sourceDir" : "/Users/woody/wls-gl-server",
+	"watch" : true
+}
