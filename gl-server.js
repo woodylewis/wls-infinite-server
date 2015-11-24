@@ -7,10 +7,11 @@ app.use(cors());
 var mongoose = require('mongoose');
 //---- Replace with real credentials -------
 //mongoose.connect('mongodb://<dbuser>:<dbpassword>@mongodb_instance');
+mongoose.connect('mongodb://wlsdbuser:~resuBdslw@ds057244.mongolab.com:57244/wls-db');
 //---- Local dev instance
-mongoose.connect('mongodb://localhost/narrations');
+//mongoose.connect('mongodb://localhost/narrations');
 
-var Narration = require('./models/narration');
+var Listing = require('./models/listing');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -32,7 +33,7 @@ router.get('/', function(req, res, next){
 
 router.route('/narrations')
 .get(function(req, res) {
-	Narration.find().
+	Listing.find().
 			  sort('_id').
 			  exec( function (err, narrations) {
 			 	if(err) {
@@ -44,7 +45,7 @@ router.route('/narrations')
 
 router.route('/edit')
 .get(function(req, res, next) {
-	Narration.find().
+	Listing.find().
 			  sort('_id').
 			  exec( function (err, narrations) {
 			 	if(err) {
@@ -70,7 +71,7 @@ router.route('/edit')
 
 router.route('/narrations/:narration_id')
 .get(function(req, res, next) {
-	Narration.findById(req.params.narration_id, function(err, narration) {
+	Listing.findById(req.params.narration_id, function(err, narration) {
 		if(err) {
 			res.send(err);
 		}
@@ -87,7 +88,7 @@ router.route('/narration-page/:narration_id')
 	operator['$lt'] = req.params.narration_id;
 	query[field] = operator;
 	var realQuery = (req.params.narration_id === 'n') ? firstPass[field] : query;
-	Narration.find(realQuery)
+	Listing.find(realQuery)
 			 .limit(30)
 			 .sort({'_id' : -1})
 			 .exec( function (err, narrations) {
@@ -107,7 +108,7 @@ router.route('/narration/:narration_url')
 	var operator = {};
 	operator['$eq'] = req.params.narration_url;
 	query[field] = operator;
-	Narration.find(query)
+	Listing.find(query)
 			 .limit(1)
 			 .exec( function (err, narration) {
 			 	if(err) {
@@ -121,20 +122,17 @@ router.route('/narration/:narration_url')
 router.route('/new') 
 .post(function(req, res, next) {
 	var data = req.body.data,
-		narration = new Narration();
+		narration = new Listing();
 
 console.log('req body', req.body);
 	narration.title = data.title;
-	narration.url = data.url;
-	narration.date = data.date;
-	narration.body = data.body;
-	narration.category = data.category;
+	narration.image = data.image;
 
 	narration.save(function (err) {
 		if(err) {
 			res.send(err);
 		}
-		res.json({message: 'Narration Created'});
+		res.json({message: 'Listing Created'});
 	});
 
 }), function(err) {
